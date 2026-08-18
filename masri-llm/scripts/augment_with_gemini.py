@@ -23,7 +23,6 @@ Usage:
 import argparse
 import json
 import os
-import random
 import time
 from pathlib import Path
 
@@ -67,8 +66,9 @@ def main():
     ap.add_argument("--n", type=int, default=200, help="total examples to generate")
     ap.add_argument("--batch_size", type=int, default=20,
                      help="Keep this modest — free-tier RPM limits mean big batches don't help.")
-    ap.add_argument("--model", default="gemini-2.5-flash",
-                     help="Flash-class models are on the free tier; Pro models are not (as of 2026).")
+    ap.add_argument("--model", default="gemini-3.6-flash",
+                     help="Flash-class models are on the free tier; Pro models are not (as of 2026). "
+                          "If this 404s, list your account's available models (see GUIDE.md) and pick one.")
     ap.add_argument("--out", default=str(DATA / "train_augmented.jsonl"))
     ap.add_argument("--sleep_seconds", type=float, default=5.0,
                      help="Pause between requests to stay under free-tier RPM limits.")
