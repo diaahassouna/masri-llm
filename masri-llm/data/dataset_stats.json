@@ -1,0 +1,40 @@
+{
+  "train_examples": 119,
+  "dev_examples": 20,
+  "eval_examples": 53,
+  "train_by_category": {
+    "alphabet": 63,
+    "ayin": 8,
+    "conversational_masri": 11,
+    "standardized_word": 11,
+    "rule_explanation": 3,
+    "rule_6_the_letters_p_and_v": 3,
+    "loanword_egyptianized_french": 1,
+    "rule_1_gemination_(doubled_consonants)": 2,
+    "loanword": 1,
+    "loanword_p_b_v_f": 6,
+    "rule_3_glottal_stop": 1,
+    "loanword_epenthesis": 1,
+    "rule_2_definite_article": 2,
+    "alphabet_borrowed": 2,
+    "loanword_judgment_call": 1,
+    "loanword_egyptianized_greek": 1,
+    "full_text_conversion": 1,
+    "loanword_visual_spelling": 1
+  },
+  "eval_by_category": {
+    "formatting": 3,
+    "gemination": 5,
+    "definite_article": 4,
+    "glottal_stop": 5,
+    "ayin": 5,
+    "q_hamza_merger": 4,
+    "p_b_v_f": 4,
+    "short_vowels": 3,
+    "loanword_english_kept": 6,
+    "loanword_egyptianized": 4,
+    "loanword_irregular_plural": 3,
+    "tha_merger": 4,
+    "homograph": 3
+  }
+}
