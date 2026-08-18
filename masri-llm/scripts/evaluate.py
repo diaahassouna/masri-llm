@@ -17,7 +17,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 
 def normalize(s: str) -> str:
@@ -26,15 +26,21 @@ def normalize(s: str) -> str:
 
 def load_model(model_id, adapter_of=None):
     tokenizer = AutoTokenizer.from_pretrained(adapter_of or model_id)
+    quant_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_use_double_quant=True,
+    )
     if adapter_of:
         from peft import PeftModel
         base = AutoModelForCausalLM.from_pretrained(
-            adapter_of, torch_dtype=torch.bfloat16, device_map="auto"
+            adapter_of, quantization_config=quant_config, dtype=torch.float16, device_map="auto"
         )
         model = PeftModel.from_pretrained(base, model_id)
     else:
         model = AutoModelForCausalLM.from_pretrained(
-            model_id, torch_dtype=torch.bfloat16, device_map="auto"
+            model_id, quantization_config=quant_config, dtype=torch.float16, device_map="auto"
         )
     model.eval()
     return model, tokenizer
