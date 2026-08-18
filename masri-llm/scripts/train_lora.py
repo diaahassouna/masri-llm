@@ -7,10 +7,10 @@ Uses TRL's SFTTrainer + PEFT LoRA + bitsandbytes 4-bit quantization (QLoRA).
 
 Usage:
   python3 train_lora.py \
-      --base_model Qwen/Qwen2.5-7B-Instruct \
+      --base_model Qwen/Qwen3-8B \
       --train_file ../data/train.jsonl \
       --eval_file ../data/dev.jsonl \
-      --output_dir ../out/masri-qwen2.5-7b-lora \
+      --output_dir ../out/masri-lora \
       --epochs 3
 
 After training, merge + push with scripts/push_to_hub.py.
@@ -44,6 +44,8 @@ def parse_args():
     p.add_argument("--lora_alpha", type=int, default=32)
     p.add_argument("--no_4bit", action="store_true",
                     help="Disable 4-bit quantization (use if you have a big GPU / are doing full fine-tune of a small model).")
+    p.add_argument("--resume_from_checkpoint", default=None,
+                    help="Path to a checkpoint folder (e.g. ../out/masri-lora-v2/checkpoint-12) to resume an interrupted run.")
     p.add_argument("--push_to_hub", default=None,
                     help="Optional repo id, e.g. 'yourname/masri-qwen2.5-7b-lora', to push directly after training.")
     return p.parse_args()
@@ -61,7 +63,7 @@ def main():
         quant_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_compute_dtype=torch.float16,
             bnb_4bit_use_double_quant=True,
         )
 
@@ -69,7 +71,7 @@ def main():
         args.base_model,
         quantization_config=quant_config,
         device_map="auto",
-        torch_dtype=torch.bfloat16,
+        dtype=torch.float16,
     )
     model.config.use_cache = False
 
@@ -90,7 +92,7 @@ def main():
 
     def format_example(ex):
         text = tokenizer.apply_chat_template(
-            ex["messages"], tokenize=False, add_generation_prompt=False
+            ex["messages"], tokenize=False, add_generation_prompt=False, enable_thinking=False
         )
         return {"text": text}
 
@@ -110,10 +112,12 @@ def main():
         warmup_ratio=0.05,
         logging_steps=5,
         eval_strategy="epoch" if eval_ds is not None else "no",
-        save_strategy="epoch",
-        save_total_limit=2,
-        bf16=True,
-        max_seq_length=args.max_seq_len,
+        save_strategy="steps",
+        save_steps=10,
+        save_total_limit=3,
+        fp16=False,
+        bf16=False,
+        max_length=args.max_seq_len,
         dataset_text_field="text",
         packing=False,
         report_to="none",
@@ -130,7 +134,7 @@ def main():
         processing_class=tokenizer,
     )
 
-    trainer.train()
+    trainer.train(resume_from_checkpoint=args.resume_from_checkpoint)
     trainer.save_model(args.output_dir)
     tokenizer.save_pretrained(args.output_dir)
 
