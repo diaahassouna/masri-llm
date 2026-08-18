@@ -4,7 +4,7 @@ inference.py — Quick interactive chat with a fine-tuned (or base) Masri model.
 
 Usage:
   python3 inference.py --model yourname/masri-qwen2.5-7b
-  python3 inference.py --model ../out/masri-lora --adapter_of Qwen/Qwen2.5-7B-Instruct
+  python3 inference.py --model ../out/masri-lora --adapter_of Qwen/Qwen3-8B
 """
 import argparse
 from pathlib import Path
@@ -47,7 +47,7 @@ while True:
     if not user_input:
         continue
     history.append({"role": "user", "content": user_input})
-    prompt = tokenizer.apply_chat_template(history, tokenize=False, add_generation_prompt=True)
+    prompt = tokenizer.apply_chat_template(history, tokenize=False, add_generation_prompt=True, enable_thinking=False)
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
     with torch.no_grad():
         out = model.generate(**inputs, max_new_tokens=200, do_sample=True, temperature=0.3, top_p=0.9)
