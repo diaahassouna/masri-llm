@@ -7,10 +7,10 @@ Uses TRL's SFTTrainer + PEFT LoRA + bitsandbytes 4-bit quantization (QLoRA).
 
 Usage:
   python3 train_lora.py \
-      --base_model Qwen/Qwen3-8B \
+      --base_model Qwen/Qwen2.5-7B-Instruct \
       --train_file ../data/train.jsonl \
       --eval_file ../data/dev.jsonl \
-      --output_dir ../out/masri-lora \
+      --output_dir ../out/masri-qwen2.5-7b-lora \
       --epochs 3
 
 After training, merge + push with scripts/push_to_hub.py.
@@ -119,6 +119,7 @@ def main():
         bf16=False,
         max_length=args.max_seq_len,
         dataset_text_field="text",
+        loss_type="nll",
         packing=False,
         report_to="none",
         push_to_hub=bool(args.push_to_hub),
