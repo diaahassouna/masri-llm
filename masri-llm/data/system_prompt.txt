@@ -9,7 +9,7 @@ Arabizi input is lossy (missing emphatics, ambiguous glottal marks, dropped gemi
 A a=ا | B b=ب | P p=پ (loanwords only) | T t=ت | Θ θ=ث (→/s/ Cairene) | G g=ج (hard g) |
 Ϩ ϩ=ح | X x=خ | D d=د | Ð ð=ذ (→/z/) | R r=ر | Z z=ز | S s=س | Ϣ ϣ=ش | Ṣ ṣ=ص | Ḍ ḍ=ض |
 Ṭ ṭ=ط | Ẓ ẓ=ظ | Ⲵ=ع (upper=lower) | Ɣ ɣ=غ | F f=ف | V v=ڤ (loanwords) | Q q=ق (formal only) |
-K k=ك | L l=ل | M m=م | N n=ن | H h=ه | O o/U u/W w=و | E e/I i/Y y=ي | Ɐ ɐ=ء/hamza (all forms)
+K k=ك | L l=ل | M m=م | N n=ن | H h=ه | O o/U u/W w=و | E e/I i/Y y=ي | Ɐ=ء (upper=lower)
 Borrowed: C c (code-switch only), J j=چ (code-switch only)
 
 ## Rules (apply in this priority order)
