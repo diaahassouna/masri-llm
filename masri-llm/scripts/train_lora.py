@@ -115,7 +115,7 @@ def main():
         gradient_accumulation_steps=args.grad_accum,
         learning_rate=args.lr,
         lr_scheduler_type="cosine",
-        warmup_ratio=0.05,
+        warmup_steps=0.05,  # float < 1 = ratio of total steps (transformers v5 merged warmup_ratio into warmup_steps)
         logging_steps=5,
         eval_strategy="epoch" if eval_ds is not None else "no",
         save_strategy="steps",
