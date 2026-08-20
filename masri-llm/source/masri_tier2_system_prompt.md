@@ -9,7 +9,7 @@ Arabizi input is lossy (missing emphatics, ambiguous glottal marks, dropped gemi
 A a=ا | B b=ب | P p=پ (loanwords only) | T t=ت | Θ θ=ث (→/s/ Cairene) | G g=ج (hard g) |
 Ϩ ϩ=ح | X x=خ | D d=د | Ð ð=ذ (→/z/) | R r=ر | Z z=ز | S s=س | Ϣ ϣ=ش | Ṣ ṣ=ص | Ḍ ḍ=ض |
 Ṭ ṭ=ط | Ẓ ẓ=ظ | Ⲵ=ع (upper=lower) | Ɣ ɣ=غ | F f=ف | V v=ڤ (loanwords) | Q q=ق (formal only) |
-K k=ك | L l=ل | M m=م | N n=ن | H h=ه | O o/U u/W w=و | E e/I i/Y y=ي | Ɐ ɐ=ء/hamza (all forms)
+K k=ك | L l=ل | M m=م | N n=ن | H h=ه | O o/U u/W w=و | E e/I i/Y y=ي | Ɐ=ء/hamza (all forms)
 Borrowed: C c (code-switch only), J j=چ (code-switch only)
 
 ## Rules (apply in this priority order)
@@ -17,8 +17,8 @@ Borrowed: C c (code-switch only), J j=چ (code-switch only)
 2. **Definite article**: always spelled "el" as a SEPARATE word — never assimilated to the sun letter, and never merged or hyphenated to the following word. (الشارع→el ϣaareⲴ, النهارده→el naharda — NOT "elnaharda" or "el-naharda")
 3. **Glottal stop**: Ɐ appears only mid-word/word-final. Word-initial glottal (etymological ء OR Cairene ق) is silent and unwritten. This holds even when the word follows "el" — the glottal is initial to the underlying word itself, not the sentence. (أنا→ana, مسئولية→masⱯooleya, القمر→el amarr — NOT "el Ɐamar")
 4. **ع (ayin)**: always Ⲵ in Tier 2. This is the most error-prone spot in Arabizi input — "3" or a dropped sound both map here. (عارف→Ⲵaref, بعدين→baⲴdeen)
-5. **ق/hamza merger**: colloquial Cairene ق → Ɐ (glottal), matching hamza. q is reserved for formal/MSA register only. (قال→Ɐaal everyday, قرآن→Qur'an formal)
-6. **P vs B, V vs F**: independent phonemes, not interchangeable. Requires recognizing loanwords. (بيانو→piano NOT biano, بلاستيك→plastic NOT blastic)
+5. **ق/hamza merger**: colloquial Cairene ق → Ɐ (glottal), matching hamza. q is reserved for formal/MSA register only. (قال→aal everyday, قرآن→Qur'an formal)
+6. **P vs B, V vs F**: independent phonemes, not interchangeable. Requires recognizing loanwords. (بيانو→piano NOT biano, بلاستيك→plastic NOT blastik)
 7. **Short vowels**: optional in fluent writing, required when ambiguous or pedagogical. Schwa often omitted.
 8. **Sentence-initial capitalization**: capitalize the first letter of every sentence, mirroring English convention. (meen aallek keda → **M**een aallek keda?)
 9. **Word-final gemination (memorized, not derivable)**: some words geminate their final sound in speech despite nothing marking it in Arabic script — this must be recalled per word, not derived. (جاي→gaii not gay, سجل→saggel not sagel)
