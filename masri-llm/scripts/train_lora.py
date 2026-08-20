@@ -39,7 +39,12 @@ def parse_args():
     p.add_argument("--lr", type=float, default=2e-4)
     p.add_argument("--batch_size", type=int, default=2)
     p.add_argument("--grad_accum", type=int, default=8)
-    p.add_argument("--max_seq_len", type=int, default=1024)
+    p.add_argument("--max_seq_len", type=int, default=2560,
+                    help="Must comfortably exceed system_prompt.txt's token length (~1750+ tokens) "
+                         "plus the user input and assistant output, or examples get silently "
+                         "truncated and the model never sees the actual task pairs. Run "
+                         "scripts/check_truncation.py to verify against the real tokenizer before "
+                         "training.")
     p.add_argument("--lora_r", type=int, default=16)
     p.add_argument("--lora_alpha", type=int, default=32)
     p.add_argument("--no_4bit", action="store_true",
