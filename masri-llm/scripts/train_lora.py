@@ -102,6 +102,10 @@ def main():
         attn_implementation="sdpa",
     )
     model.config.use_cache = False
+    # Needed alongside gradient_checkpointing when training a quantized (4-bit) base
+    # model with LoRA — otherwise the frozen input embeddings block gradient flow
+    # into the adapter layers and checkpointing silently produces no gradients.
+    model.enable_input_require_grads()
 
     peft_config = LoraConfig(
         r=args.lora_r,
@@ -150,6 +154,8 @@ def main():
         loss_type="nll",
         packing=False,
         optim="paged_adamw_8bit",
+        gradient_checkpointing=True,
+        gradient_checkpointing_kwargs={"use_reentrant": False},
         report_to="none",
         push_to_hub=bool(args.push_to_hub),
         hub_model_id=args.push_to_hub,
