@@ -5,7 +5,7 @@ which is derived 1:1 from masri_tier2_eval_set.json. Never train on this file.
 
 Usage:
   python3 evaluate.py --model yourname/masri-qwen2.5-7b
-  python3 evaluate.py --model ../out/masri-lora --adapter_of Qwen/Qwen3-8B
+  python3 evaluate.py --model ../out/masri-lora --adapter_of Qwen/Qwen2.5-7B-Instruct
 
 Outputs a per-category pass table and writes eval_results.json with every
 model output next to its expected answer, so you can see exactly which rule
@@ -46,7 +46,7 @@ def load_model(model_id, adapter_of=None):
     return model, tokenizer
 
 
-def generate(model, tokenizer, system_prompt, user_input, max_new_tokens=128):
+def generate(model, tokenizer, system_prompt, user_input, max_new_tokens=512):
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_input},
@@ -64,6 +64,10 @@ def generate(model, tokenizer, system_prompt, user_input, max_new_tokens=128):
             top_p=None,
         )
     text = tokenizer.decode(out[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True)
+    # Qwen3 can still emit a </think> tag even with enable_thinking=False on some
+    # checkpoints/adapters — strip anything up to and including it defensively.
+    if "</think>" in text:
+        text = text.split("</think>", 1)[1]
     return text.strip()
 
 
