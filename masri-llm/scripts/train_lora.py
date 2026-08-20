@@ -77,6 +77,7 @@ def main():
         quantization_config=quant_config,
         device_map="auto",
         dtype=torch.float16,
+        attn_implementation="sdpa",
     )
     model.config.use_cache = False
 
@@ -126,6 +127,7 @@ def main():
         dataset_text_field="text",
         loss_type="nll",
         packing=False,
+        optim="paged_adamw_8bit",
         report_to="none",
         push_to_hub=bool(args.push_to_hub),
         hub_model_id=args.push_to_hub,
