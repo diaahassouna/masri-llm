@@ -51,14 +51,14 @@ def parse_args():
     p.add_argument("--output_dir", default="../out/masri-lora")
     p.add_argument("--epochs", type=float, default=3.0)
     p.add_argument("--lr", type=float, default=2e-4)
-    p.add_argument("--batch_size", type=int, default=2)
-    p.add_argument("--grad_accum", type=int, default=8)
-    p.add_argument("--max_seq_len", type=int, default=2560,
-                    help="Must comfortably exceed system_prompt.txt's token length (~1750+ tokens) "
-                         "plus the user input and assistant output, or examples get silently "
-                         "truncated and the model never sees the actual task pairs. Run "
-                         "scripts/check_truncation.py to verify against the real tokenizer before "
-                         "training.")
+    # T4/T4x2 memory-safe defaults: reduce per-GPU batch and increase accumulation
+    # so the effective batch size remains 32 on Kaggle T4x2.
+    p.add_argument("--batch_size", type=int, default=1)
+    p.add_argument("--grad_accum", type=int, default=16)
+    p.add_argument("--max_seq_len", type=int, default=2048,
+                    help="Must comfortably exceed the system prompt plus user input "
+                         "and assistant output, or examples may be truncated. Use "
+                         "scripts/check_truncation.py to verify against the real tokenizer.")
     p.add_argument("--lora_r", type=int, default=16)
     p.add_argument("--lora_alpha", type=int, default=32)
     p.add_argument("--no_4bit", action="store_true",
@@ -114,7 +114,7 @@ def main():
         bias="none",
         task_type="CAUSAL_LM",
         target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
-                         "gate_proj", "up_proj", "down_proj"],
+                        "gate_proj", "up_proj", "down_proj"],
     )
 
     data_files = {"train": args.train_file}
@@ -141,7 +141,7 @@ def main():
         gradient_accumulation_steps=args.grad_accum,
         learning_rate=args.lr,
         lr_scheduler_type="cosine",
-        warmup_steps=0.05,  # float < 1 = ratio of total steps (transformers v5 merged warmup_ratio into warmup_steps)
+        warmup_steps=0.05,  # float in [0,1) is interpreted as a fraction of total steps
         logging_steps=5,
         eval_strategy="epoch" if eval_ds is not None else "no",
         save_strategy="steps",
