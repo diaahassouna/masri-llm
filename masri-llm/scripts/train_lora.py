@@ -2,10 +2,12 @@
 """
 train_lora.py — LoRA fine-tune an open base model on the Masri dataset.
 
-Designed to run on a single Colab/free-tier T4 (7B in 4-bit) or better.
+Runs on a single Colab/free-tier T4 (7B in 4-bit) or scales to multi-GPU via
+accelerate DDP (e.g. Kaggle's T4x2) — each process loads a full copy of the
+quantized model on its own GPU.
 Uses TRL's SFTTrainer + PEFT LoRA + bitsandbytes 4-bit quantization (QLoRA).
 
-Usage:
+Usage (single GPU):
   python3 train_lora.py \
       --base_model Qwen/Qwen2.5-7B-Instruct \
       --train_file ../data/train.jsonl \
@@ -13,12 +15,24 @@ Usage:
       --output_dir ../out/masri-qwen2.5-7b-lora \
       --epochs 3
 
+Usage (multi-GPU DDP, e.g. Kaggle T4x2):
+  accelerate launch --num_processes 2 --multi_gpu train_lora.py \
+      --base_model Qwen/Qwen2.5-7B-Instruct \
+      --train_file ../data/train.jsonl \
+      --eval_file ../data/dev.jsonl \
+      --output_dir ../out/masri-qwen2.5-7b-lora \
+      --epochs 3
+  # per_device_train_batch_size still applies PER GPU — effective batch size
+  # = batch_size * grad_accum * num_processes, so you may want to halve
+  # --grad_accum from the single-GPU value to keep the effective batch the same.
+
 After training, merge + push with scripts/push_to_hub.py.
 """
 import argparse
 import json
 
 import torch
+from accelerate import PartialState
 from datasets import load_dataset
 from peft import LoraConfig
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
@@ -72,10 +86,18 @@ def main():
             bnb_4bit_use_double_quant=True,
         )
 
+    # For multi-GPU DDP (e.g. Kaggle T4x2 via `accelerate launch`), each process must
+    # load the FULL quantized model onto its own single GPU — device_map="auto" would
+    # instead shard one model across all visible GPUs (model parallelism), which
+    # conflicts with accelerate's one-process-per-GPU data-parallel training and causes
+    # OOM/hangs. PartialState().process_index gives the right device per process,
+    # and also works correctly (0) for single-GPU/no-accelerate runs.
+    device_map = {"": PartialState().process_index}
+
     model = AutoModelForCausalLM.from_pretrained(
         args.base_model,
         quantization_config=quant_config,
-        device_map="auto",
+        device_map=device_map,
         dtype=torch.float16,
         attn_implementation="sdpa",
     )
